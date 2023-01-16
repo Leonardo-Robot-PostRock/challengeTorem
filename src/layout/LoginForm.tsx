@@ -38,14 +38,12 @@ function LoginForm() {
         alert(response.data.message);
         router.push('chat');
       } else {
-        console.log(response.data);
         alert(response.data.message);
       }
     } catch (error: any) {
       if(error.response.status) {
         return alert(error.response.data.message)
       }
-      console.error(error);
     }
   };
 

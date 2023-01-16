@@ -48,7 +48,7 @@ function Register() {
 
     try {
       const response = await apiClient.post('signup', data);
-      
+
       if (response.data) {
         alert('Registro exitoso!');
         router.push('/');
@@ -59,7 +59,6 @@ function Register() {
       if (error.response.status) {
         return alert(error.response.data.message);
       }
-      console.error(error);
     }
     /* 
       TODO: 
