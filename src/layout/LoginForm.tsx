@@ -34,16 +34,18 @@ function LoginForm() {
 
     try {
       const response = await apiClient.post('login', data);
-      console.log(response.data);
-      if (response.data) {        
-        alert('Inicio de sesión exitoso!');
+      if (response.data) {
+        alert(response.data.message);
         router.push('chat');
       } else {
+        console.log(response.data);
         alert(response.data.message);
       }
-    } catch (error) {
+    } catch (error: any) {
+      if(error.response.status) {
+        return alert(error.response.data.message)
+      }
       console.error(error);
-      alert('Error en el inicio de sesión, por favor intente de nuevo más tarde.');
     }
   };
 
@@ -73,7 +75,13 @@ function LoginForm() {
       />
 
       <div className="content d-flex flex-column mb-5 d-flex align-items-start" data-aos="fade">
-        <button type="submit" className="btn btn-primary" onClick={handleLogin} onChange={()=>{router.push('/chat')}}>
+        <button
+          type="submit"
+          className="btn btn-primary"
+          onClick={handleLogin}
+          onChange={() => {
+            router.push('/chat');
+          }}>
           Ingresar
         </button>
       </div>

@@ -48,17 +48,18 @@ function Register() {
 
     try {
       const response = await apiClient.post('signup', data);
-      console.log(response.data);
-
+      
       if (response.data) {
         alert('Registro exitoso!');
         router.push('/');
       } else {
         alert(response.data.message);
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error.response.status) {
+        return alert(error.response.data.message);
+      }
       console.error(error);
-      alert('Error en el registro, por favor intente de nuevo más tarde.');
     }
     /* 
       TODO: 
