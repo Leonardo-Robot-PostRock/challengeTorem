@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import { useRef, useState } from 'react';
 import FormData from 'form-data';
+import apiClient from '../utils/client';
 
 import { RegisterData } from '../types/register';
 import Field from '../components/Home/Field';
+import { useRouter } from 'next/router';
 
 function Register() {
   const initialValues: RegisterData = {
@@ -12,6 +14,7 @@ function Register() {
     email: '',
     password: ''
   };
+  const router = useRouter();
 
   const [selectedImage, setSelectedImage] = useState<any | null>(null);
   const [formData, setFormData] = useState<RegisterData>(initialValues);
@@ -36,12 +39,27 @@ function Register() {
     }
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     data.append('image', selectedImage);
     data.append('name', formData.name);
     data.append('lastName', formData.lastName);
     data.append('email', formData.email);
     data.append('password', formData.password);
+
+    try {
+      const response = await apiClient.post('signup', data);
+      console.log(response.data);
+
+      if (response.data) {
+        alert('Registro exitoso!');
+        router.push('/');
+      } else {
+        alert(response.data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Error en el registro, por favor intente de nuevo más tarde.');
+    }
     /* 
       TODO: 
       1. Make a new user
@@ -52,15 +70,8 @@ function Register() {
   return (
     <div
       id="register"
-      className="right-side d-flex flex-column justify-content-start w-50 bg-chatter-green h-100 py-4 fs-1 fw-bold scroll-y"
-    >
-      <Field
-        title="NOMBRE"
-        type="text"
-        name="name"
-        placeholder="Ingresa tu nombre"
-        onChange={handleInputChange}
-      />
+      className="right-side d-flex flex-column justify-content-start w-50 bg-chatter-green h-100 py-4 fs-1 fw-bold scroll-y">
+      <Field title="NOMBRE" type="text" name="name" placeholder="Ingresa tu nombre" onChange={handleInputChange} />
 
       <Field
         title="APELLIDO"
@@ -84,12 +95,7 @@ function Register() {
           <button className="btn btn-input-file" onClick={handleFileClick}>
             Seleccionar Archivo
           </button>
-          <input
-            type="file"
-            ref={hiddenFileInput}
-            style={{ display: 'none' }}
-            onChange={handleImageChange}
-          />
+          <input type="file" ref={hiddenFileInput} style={{ display: 'none' }} onChange={handleImageChange} />
         </label>
       </div>
 

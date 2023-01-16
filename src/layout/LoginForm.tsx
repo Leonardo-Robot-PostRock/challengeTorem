@@ -3,8 +3,12 @@ import React, { useState } from 'react';
 import FormData from 'form-data';
 import Link from 'next/link';
 import { LoginData } from '../types/login';
+import apiClient from '../utils/client';
+import { useRouter } from 'next/router';
 
 function LoginForm() {
+  const router = useRouter();
+
   const initialValues: LoginData = {
     email: '',
     password: ''
@@ -18,7 +22,7 @@ function LoginForm() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     resetForm();
     data.append('email', formData.email);
     data.append('password', formData.password);
@@ -27,6 +31,20 @@ function LoginForm() {
       1. Check login
       2. Handle errors (if there is at least one) 
     */
+
+    try {
+      const response = await apiClient.post('login', data);
+      console.log(response.data);
+      if (response.data) {        
+        alert('Inicio de sesión exitoso!');
+        router.push('chat');
+      } else {
+        alert(response.data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Error en el inicio de sesión, por favor intente de nuevo más tarde.');
+    }
   };
 
   const resetForm = () => {
@@ -37,8 +55,7 @@ function LoginForm() {
   return (
     <div
       id="login"
-      className="right-side d-flex flex-column justify-content-center w-50 bg-chatter-green h-100 py-5 fs-1 fw-bold"
-    >
+      className="right-side d-flex flex-column justify-content-center w-50 bg-chatter-green h-100 py-5 fs-1 fw-bold">
       <Field
         title="E-MAIL"
         type="email"
@@ -56,7 +73,7 @@ function LoginForm() {
       />
 
       <div className="content d-flex flex-column mb-5 d-flex align-items-start" data-aos="fade">
-        <button type="submit" className="btn btn-primary" onClick={handleLogin}>
+        <button type="submit" className="btn btn-primary" onClick={handleLogin} onChange={()=>{router.push('/chat')}}>
           Ingresar
         </button>
       </div>
